@@ -1,9 +1,5 @@
 import numpy as np
 
-#for sentiment analysis
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from textblob import TextBlob
-
 from utils.text_processing import *
 
 class Credibility:

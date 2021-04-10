@@ -62,4 +62,4 @@ class Sentiment:
             self._textblob(df, text_col)
         else:
             raise ValueError("Incorrect method for extracting sentiments! \
-                Should be vader, textblob")
+                Should be vader, textblob") 
