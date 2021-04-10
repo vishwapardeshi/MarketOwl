@@ -1,7 +1,5 @@
 #use this script to pull data for experimentation purpose
-import nltk
-from nltk.tokenize import TweetTokenizer
-
+import pandas as pd
 import config
 
 def load_data(filename, type = 'transcipt'):
@@ -30,12 +28,3 @@ def load_data(filename, type = 'transcipt'):
     else:
         raise ValueError("Incorrect data type! \
                 Should be transcript, 10k or 10q")
-
-def tokenize(df, text_col):
-    """
-    Function to tokenize the text input using tweetTokenizer
-    """
-    tweet_tokenizer = TweetTokenizer()
-    df['tokenized_text'] = df[text_col].apply(tweet_tokenizer.tokenize)
-    return df
-        
