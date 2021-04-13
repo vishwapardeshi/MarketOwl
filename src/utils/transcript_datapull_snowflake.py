@@ -26,10 +26,10 @@ import sqlalchemy
 
 # MAKING CONNECTION
 conn = snowflake.connector.connect(
-  user=SECRET,
-  password=SECRET,
-  account=SECRET,
-  warehouse=SECRET,
+  user='Vishwap',
+  password='bedxyb-feggyc-Dyqve8',
+  account='dadavidson.west-us-2.azure',
+  warehouse='LOAD_WH',
 #  database=DATABASE,
 #  schema=SCHEMA
   session_parameters={
