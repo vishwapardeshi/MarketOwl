@@ -4,9 +4,9 @@ import config
 
 def load_data(filename, type = 'transcipt'):
     """
-    To load data of three types - 
+    To load data of three types -
     1. Transcripts
-    2. 10 K 
+    2. 10 K
     3. 10 Q
 
     Args:
@@ -14,17 +14,20 @@ def load_data(filename, type = 'transcipt'):
     type : Type of data to be loaded
 
     Returns:
-    df (DataFrame) : Containing text column extracted along with unique ID 
-    text_col (String) : Return name of text column to focus on 
+    df (DataFrame) : Containing text column extracted along with unique ID
+    text_col (String) : Return name of text column to focus on
     """
     df = pd.read_csv(config.INPUT_FOLDER + filename)
     if type == 'transcript':
-        #load only company ticker 
-        text_col = 'transcript'
+        #load only company ticker
+        text_col = 'Transcript'
     elif type == '10k':
-        text_col = 'text'
+        text_col = 'item_1'
     elif type == '10q':
         text_col = 'text'
     else:
         raise ValueError("Incorrect data type! \
                 Should be transcript, 10k or 10q")
+        return
+    return df, text_col
+    

@@ -1,5 +1,6 @@
 import spacy
-from textstat.textstat import textstatistics, easy_word_set, legacy_round
+from textstat.textstat import textstatistics, legacy_round
+#from textstat.textstat import textstatistics, easy_word_set, legacy_round
 
 import nltk
 from nltk.tokenize import TweetTokenizer
@@ -14,12 +15,12 @@ def tokenize(df, text_col):
 
 def break_sentences(text):
     """
-    Splits the text into sentences, using Spacy's sentence segmentation which can 
+    Splits the text into sentences, using Spacy's sentence segmentation which can
     be found at https://spacy.io/usage/spacy-101
     """
-    nlp = spacy.load('en')
+    nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
-    return doc.sents
+    return list(doc.sents)
 
 def word_count(text):
     """
@@ -75,10 +76,10 @@ def difficult_words(text):
         words += [str(token) for token in sentence]
 
     # difficult words are those with syllables >= 2
-    # easy_word_set is provide by Textstat as 
+    # easy_word_set is provide by Textstat as
     # a list of common words
     diff_words_set = set()
-    
+
     for word in words:
         syllable_count = syllables_count(word)
         if word not in easy_word_set and syllable_count >= 2:
@@ -88,7 +89,7 @@ def difficult_words(text):
 
 def poly_syllable_count(text):
     """
-    A word is polysyllablic if it has more than 3 syllables this functions 
+    A word is polysyllablic if it has more than 3 syllables this functions
     returns the number of all such words present in text
     """
     count = 0
@@ -96,7 +97,7 @@ def poly_syllable_count(text):
     sentences = break_sentences(text)
     for sentence in sentences:
         words += [token for token in sentence]
-    
+
 
     for word in words:
         syllable_count = syllables_count(word)
