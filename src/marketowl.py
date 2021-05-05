@@ -41,7 +41,7 @@ def main(sentiment, credibility, data):
         elif data == '10k':
             print("\n\nLoading transcript file...")
             df_10k, text_col = load_data('sec_10k.csv', '10k')
-            print("Loaded into dataframe of size", df_10k.shape)
+            #print("Loaded into dataframe of size", df_10k.shape)
 
             #perform sentiment analysis
             print("\nPerforming sentiment analysis using method:", sentiment)
@@ -72,6 +72,8 @@ if __name__ == '__main__':
     help="credibilty index")
     ap.add_argument("-data", "--datatype", required=False,
     help="data type")
+    ap.add_argument("-p", "--parallel", required=False,
+    help="Parallel")
     args = vars(ap.parse_args())
     print(args)
     main(args['sentiment'], args['credibility'], args['datatype'])
