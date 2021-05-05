@@ -1,5 +1,5 @@
 import argparse
-
+import time
 from sentiment import Sentiment
 from credibility import Credibility
 from utils.data import load_data
@@ -27,13 +27,17 @@ def main(sentiment, credibility, data):
 
             #perform sentiment analysis
             print("\nPerforming sentiment analysis using method:", sentiment)
+            st = time.time()
             sentiment = Sentiment(method=sentiment)
             sentiment.get_sentiment(df_transcript, text_col)
+            print("Total time taken for performing sentiment analysis", time.time() - st)
 
             #perform credibility analysis
+            st = time.time()
             print("\nPerforming credibility analysis using method:", credibility)
             credibility = Credibility(method=credibility)
             credibility.get_credibility(df_transcript, text_col)
+            print("Total time taken for performing credbility analysis", time.time() - st)
 
             #save data checkpoints
             print("\nSaving sentiment & credibility result for transcript file...\n\n")
