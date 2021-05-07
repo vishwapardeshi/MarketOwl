@@ -57,7 +57,7 @@ class Keywords:
 		    # gather top 100 keywords
 		    keywords = {}
 		    for word, count in zip(vectorizer.get_feature_names(), tfidf):
-		        keywords[word] = count
+		      keywords[word] = count
 		    words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
 		    top_keywords = [x[0] for x in words_dict][:100]
 		    top_keywords_all.append(top_keywords)
@@ -68,12 +68,11 @@ class Keywords:
 	#---------------------------------------------------------------------#
 
 	def get_keywords(self, df, text_col):
-        if self.method == 'count':
-            self._count(df, text_col)
-        elif self.method == 'tfidf':
-            self._tfidf(df, text_col)
+		if self.method == 'count':
+			self._count(df, text_col)
+		elif self.method == 'tfidf':
+			self._tfidf(df, text_col)
         else:
-            raise ValueError("Incorrect method for extracting keywords! \
-                Should be 'tfidf' or 'count'")
+			raise ValueError("Incorrect method for extracting keywords! Should be 'tfidf' or 'count'")
 
 	#---------------------------------------------------------------------#
