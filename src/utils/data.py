@@ -1,12 +1,12 @@
 #use this script to pull data for experimentation purpose
-import multiprocessing
+
 
 import pandas as pd
-import dask.dataframe as ddf
+
 
 import config
 
-def load_data(filename, type = 'transcipt', parallel = False):
+def load_data(filename, type = 'transcipt'):
     """
     To load data of three types - 
     1. Transcripts
@@ -33,8 +33,5 @@ def load_data(filename, type = 'transcipt', parallel = False):
     else:
         raise ValueError("Incorrect data type! \
                 Should be transcript, 10k or 10q")
-    if parallel:
-        dask_dataframe = ddf.from_pandas(df, npartitions=multiprocessing.cpu_count())
-        return dask_dataframe, text_col
-    else:
-        return df, text_col
+    
+    return df, text_col
