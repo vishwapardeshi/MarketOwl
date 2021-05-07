@@ -1,6 +1,5 @@
 import spacy
 from textstat.textstat import textstatistics, legacy_round
-#from textstat.textstat import textstatistics, easy_word_set, legacy_round
 
 import nltk
 from nltk.tokenize import TweetTokenizer
@@ -79,6 +78,9 @@ def difficult_words(text):
     # easy_word_set is provide by Textstat as
     # a list of common words
     diff_words_set = set()
+    with open("easy_words.txt") as f:
+        lines = f.readlines()
+    easy_word_set = set([x.strip() for x in lines]) 
 
     for word in words:
         syllable_count = syllables_count(word)
