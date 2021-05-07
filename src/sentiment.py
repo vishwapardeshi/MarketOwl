@@ -77,9 +77,9 @@ class Sentiment:
             pos_list.append(round(counter[1]/sum(counter.values()), 4))
             neg_list.append(round(counter[-1]/sum(counter.values()), 4))
 
-            # assign ratios to new columns
-            df['pos_ratio'] = pos_list
-            df['neg_ratio'] = neg_list
+        # assign ratios to new columns
+        df['pos_ratio'] = pos_list
+        df['neg_ratio'] = neg_list
 
     def _bert(self, df, text_col):
         """
