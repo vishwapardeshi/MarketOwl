@@ -58,7 +58,7 @@ class Sentiment:
     def get_sentiment(self, df, text_col):
         if self.method == 'vader':
             self._vader(df, text_col)
-            df.to_csv('sentiment.csv')
+            df.to_csv('sentiment.csv')    # WHY THIS??? -Tony
         elif self.method == 'textblob':
             self._textblob(df, text_col)
         else:
