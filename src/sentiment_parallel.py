@@ -1,4 +1,9 @@
 import numpy as np
+import pandas as pd
+import multiprocessing
+import dask.dataframe as ddf
+#import dask.multiprocessing
+#dask.config.set(scheduler='processes')
 
 #for sentiment analysis
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -12,8 +17,19 @@ class Sentiment:
         """
         Function to get sentiment label using vader library
         """
+        dask_dataframe = ddf.from_pandas(df[:20], npartitions=multiprocessing.cpu_count())
+        print("This is text col", text_col)
+        print('***********', df.columns)
+        print(df.columns)
         vader = SentimentIntensityAnalyzer()
-        df['polarity_score'] = df.text_col.map_partitions(lambda x: vader.polarity_scores(x)['compound'])
+        print("starting dask")
+        result = dask_dataframe[text_col].map_partitions(lambda x: vader.polarity_scores(x)['compound'])
+        print(result)
+        print('1 done')
+        df['polarity_score'] = result.compute()
+        print("saved result")
+        print(df.columns)
+
 
         # create a list of our conditions
         conditions = [

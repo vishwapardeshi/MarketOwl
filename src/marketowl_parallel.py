@@ -1,7 +1,7 @@
 import argparse
 import time
-from sentiment import Sentiment
-from credibility import Credibility
+from sentiment_parallel import Sentiment
+from credibility_parallel import Credibility
 from utils.data import load_data
 
 def main(sentiment, credibility, data):
@@ -22,8 +22,8 @@ def main(sentiment, credibility, data):
         if data == 'transcript':
             print("\n\nLoading transcript file...")
             df_transcript, text_col = load_data('transcripts.csv', 'transcript')
-            print("Loaded into dataframe of size", df_transcript.shape)
-
+            #print("Loaded into dataframe of size", df_transcript.shape)
+            print("This is the text col", text_col)
 
             #perform sentiment analysis
             print("\nPerforming sentiment analysis using method:", sentiment)
@@ -33,11 +33,11 @@ def main(sentiment, credibility, data):
             print("Total time taken for performing sentiment analysis", time.time() - st)
 
             #perform credibility analysis
-            st = time.time()
-            print("\nPerforming credibility analysis using method:", credibility)
-            credibility = Credibility(method=credibility)
-            credibility.get_credibility(df_transcript, text_col)
-            print("Total time taken for performing credbility analysis", time.time() - st)
+            #st = time.time()
+            #print("\nPerforming credibility analysis using method:", credibility)
+            #credibility = Credibility(method=credibility)
+            #credibility.get_credibility(df_transcript, text_col)
+            #print("Total time taken for performing credbility analysis", time.time() - st)
 
             #save data checkpoints
             print("\nSaving sentiment & credibility result for transcript file...\n\n")
@@ -76,8 +76,6 @@ if __name__ == '__main__':
     help="credibilty index")
     ap.add_argument("-data", "--datatype", required=False,
     help="data type")
-    ap.add_argument("-p", "--parallel", required=False,
-    help="Parallel")
     args = vars(ap.parse_args())
     print(args)
     main(args['sentiment'], args['credibility'], args['datatype'])
