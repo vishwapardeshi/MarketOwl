@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
-class Keywords():
+class Keywords:
 
 	#---------------------------------------------------------------------#
 
@@ -23,10 +23,10 @@ class Keywords():
 		
 		top_keywords_all = []
 		for i in range(len(df[text_col])):
-		    keywords = {}
 		    tf = X[i,:].toarray().tolist()[0]
 
 		    # gather top 100 keywords
+		    keywords = {}
 		    for word, count in zip(vectorizer.get_feature_names(), tf):
 		        keywords[word] = count
 		    words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
@@ -52,10 +52,10 @@ class Keywords():
 		
 		top_keywords_all = []
 		for i in range(len(df[text_col])):
-		    keywords = {}
 		    tfidf = X[i,:].toarray().tolist()[0]
 
 		    # gather top 100 keywords
+		    keywords = {}
 		    for word, count in zip(vectorizer.get_feature_names(), tfidf):
 		        keywords[word] = count
 		    words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
