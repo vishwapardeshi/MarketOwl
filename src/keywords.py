@@ -30,8 +30,8 @@ class Keywords:
             for word, count in zip(vectorizer.get_feature_names(), tf):
                 keywords[word] = count
             words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
-            top_keywords = [x[0] for x in words_dict][:100]
-            top_keywords_all.append(top_keywords)
+            # top_keywords = [x[0] for x in words_dict][:100]
+            top_keywords_all.append(words_dict[:300])
 
         # add column to dataframe
         df['keywords'] = top_keywords_all
@@ -59,8 +59,8 @@ class Keywords:
             for word, count in zip(vectorizer.get_feature_names(), tfidf):
                 keywords[word] = count
             words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
-            top_keywords = [x[0] for x in words_dict][:100]
-            top_keywords_all.append(top_keywords)
+            # top_keywords = [x[0] for x in words_dict][:100]
+            top_keywords_all.append(words_dict[:300])
 
         # add column to dataframe
         df['keywords'] = top_keywords_all
