@@ -69,10 +69,10 @@ class Keywords:
 
 	def get_keywords(self, df, text_col):
 		if self.method == 'count':
-            self._count(df, text_col)
+        	self._count(df, text_col)
 		elif self.method == 'tfidf':
-            self._tfidf(df, text_col)
-        else:
-            raise ValueError("Incorrect method for extracting keywords! Should be 'tfidf' or 'count'")
+        	self._tfidf(df, text_col)
+		else:
+        	raise ValueError("Incorrect method for extracting keywords! Should be 'tfidf' or 'count'")
 
 	#---------------------------------------------------------------------#
