@@ -41,7 +41,7 @@ def main(sentiment, credibility, topic, data):
                 credibility.get_credibility(df_transcript, text_col)
                 print("Total time taken for performing credbility analysis", time.time() - st)
 
-            if topic != 'n':
+            if topic == 'y':
                 #perform topic modeling
                 st = time.time()
                 print("\nPerforming topic modeling using LDA")
@@ -88,9 +88,9 @@ if __name__ == '__main__':
     help="credibilty index")
     ap.add_argument("-topic", "--topic", required=True,
     help="Topic Modeling")
-    ap.add_argument("-data", "--datatype", required=False,
+    ap.add_argument("-data", "--datatype", required=True,
     help="data type")
     
     args = vars(ap.parse_args())
     print(args)
-    main(args['sentiment'], args['credibility'], args['datatype'])
+    main(args['sentiment'], args['credibility'], args['topic'], args['datatype'])

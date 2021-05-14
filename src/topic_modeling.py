@@ -12,7 +12,7 @@ import spacy
 
 # Plotting tools
 import pyLDAvis
-import pyLDAvis.gensim  # don't skip this
+#import pyLDAvis.gensim  # don't skip this
 import matplotlib.pyplot as plt
 
 from utils.text_processing import * 
@@ -31,19 +31,23 @@ class TopicModel:
         data_words = list(sent_to_words(data))
 
         # Remove Stop Words
-        data_words_nostops = remove_stopwords(data_words)
+        data_words_nostops = remove_stopwords(data_words, exclude = ['thank', 'think', 'year', 'business', 'obviously', 'see', 'lot'])
 
         # Form Bigrams
-        data_words_bigrams = make_bigrams(data_words_nostops)
+        data_words_bigrams = make_bigrams(data_words_nostops, data_words)
+
+        df['bigrams'] = data_words_bigrams
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
-        nlp = spacy.load('en', disable=['parser', 'ner'])
+        nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
 
         # Do lemmatization keeping only noun, adj, vb, adv
         self.data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
-        self.df['clean_text'] = self.data_lemmatized
+        df['clean_text'] = self.data_lemmatized
+
+        df.to_csv("cleaned-transcripts.csv")
 
         return self.data_lemmatized
 
@@ -63,7 +67,7 @@ class TopicModel:
         self._create_dic_corpus(df, text_col)
         self.lda_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
                                                 id2word=self.id2word,
-                                                num_topics=20, 
+                                                num_topics=3, 
                                                 random_state=100,
                                                 update_every=1,
                                                 chunksize=100,

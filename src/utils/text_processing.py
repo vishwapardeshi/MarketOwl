@@ -9,6 +9,7 @@ from nltk.tokenize import TweetTokenizer
 import gensim
 from gensim.utils import simple_preprocess
 
+
 def tokenize(df, text_col):
     """
     Function to tokenize the text input using tweetTokenizer
@@ -23,13 +24,13 @@ def sent_to_words(sentences):
 
 def remove_stopwords(texts, exclude = None):
     stop_words = stopwords.words('english')
-    if exclude:
+    if exclude != None:
         stop_words.extend(exclude)
     return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 
 def make_bigrams(texts, data_words):
     # Build the bigram model
-    bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100) # higher threshold fewer phrases.
+    bigram = gensim.models.Phrases(data_words, min_count=5, threshold=50) # higher threshold fewer phrases.
 
     # Faster way to get a sentence clubbed as a bigram
     bigram_mod = gensim.models.phrases.Phraser(bigram)
@@ -47,6 +48,7 @@ def make_trigrams(texts, data_words):
 
 def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     """https://spacy.io/api/annotation"""
+    nlp = spacy.load("en_core_web_sm")
     texts_out = []
     for sent in texts:
         doc = nlp(" ".join(sent)) 
