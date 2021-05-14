@@ -2,7 +2,12 @@ import spacy
 from textstat.textstat import textstatistics, legacy_round
 
 import nltk
+# NLTK Stop words
+from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
+
+import gensim
+from gensim.utils import simple_preprocess
 
 def tokenize(df, text_col):
     """
@@ -11,6 +16,42 @@ def tokenize(df, text_col):
     tweet_tokenizer = TweetTokenizer()
     df['tokenized_text'] = df[text_col].apply(tweet_tokenizer.tokenize)
     return df
+
+def sent_to_words(sentences):
+    for sentence in sentences:
+        yield(simple_preprocess(str(sentence), deacc=True))  # deacc=True removes punctuations
+
+def remove_stopwords(texts, exclude = None):
+    stop_words = stopwords.words('english')
+    if exclude:
+        stop_words.extend(exclude)
+    return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
+
+def make_bigrams(texts, data_words):
+    # Build the bigram model
+    bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100) # higher threshold fewer phrases.
+
+    # Faster way to get a sentence clubbed as a bigram
+    bigram_mod = gensim.models.phrases.Phraser(bigram)
+    return [bigram_mod[doc] for doc in texts]
+
+def make_trigrams(texts, data_words):
+    # Build the trigram model
+    bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100) # higher threshold fewer phrases.
+    trigram = gensim.models.Phrases(bigram[data_words], threshold=100)  
+
+    # Faster way to get a sentence clubbed as a trigram
+    bigram_mod = gensim.models.phrases.Phraser(bigram)
+    trigram_mod = gensim.models.phrases.Phraser(trigram)
+    return [trigram_mod[bigram_mod[doc]] for doc in texts]
+
+def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+    """https://spacy.io/api/annotation"""
+    texts_out = []
+    for sent in texts:
+        doc = nlp(" ".join(sent)) 
+        texts_out.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
+    return texts_out
 
 def break_sentences(text):
     """

@@ -2,9 +2,10 @@ import argparse
 import time
 from sentiment import Sentiment
 from credibility import Credibility
+from topic_modeling import TopicModel
 from utils.data import load_data
 
-def main(sentiment, credibility, data):
+def main(sentiment, credibility, topic, data):
     #fetch data - if nothing mentioned do for all three
     if data is None:
         df_transcript = load_data('transcripts.csv', 'transcript')
@@ -24,20 +25,31 @@ def main(sentiment, credibility, data):
             df_transcript, text_col = load_data('transcripts.csv', 'transcript')
             print("Loaded into dataframe of size", df_transcript.shape)
 
+            if sentiment != 'n':
+                #perform sentiment analysis
+                print("\nPerforming sentiment analysis using method:", sentiment)
+                st = time.time()
+                sentiment = Sentiment(method=sentiment)
+                sentiment.get_sentiment(df_transcript, text_col)
+                print("Total time taken for performing sentiment analysis", time.time() - st)
 
-            #perform sentiment analysis
-            print("\nPerforming sentiment analysis using method:", sentiment)
-            st = time.time()
-            sentiment = Sentiment(method=sentiment)
-            sentiment.get_sentiment(df_transcript, text_col)
-            print("Total time taken for performing sentiment analysis", time.time() - st)
+            if credibility != 'n':
+                #perform credibility analysis
+                st = time.time()
+                print("\nPerforming credibility analysis using method:", credibility)
+                credibility = Credibility(method=credibility)
+                credibility.get_credibility(df_transcript, text_col)
+                print("Total time taken for performing credbility analysis", time.time() - st)
 
-            #perform credibility analysis
-            st = time.time()
-            print("\nPerforming credibility analysis using method:", credibility)
-            credibility = Credibility(method=credibility)
-            credibility.get_credibility(df_transcript, text_col)
-            print("Total time taken for performing credbility analysis", time.time() - st)
+            if topic != 'n':
+                #perform topic modeling
+                st = time.time()
+                print("\nPerforming topic modeling using LDA")
+                topic_model = TopicModel()
+                topic_model.lda(df_transcript, text_col)
+                topic_model.get_topics()
+                topic_model.get_metrics()
+                print("Total time taken for performing credbility analysis", time.time() - st)
 
             #save data checkpoints
             print("\nSaving sentiment & credibility result for transcript file...\n\n")
@@ -74,10 +86,11 @@ if __name__ == '__main__':
     help="sentiment index")
     ap.add_argument("-c", "--credibility", required=True,
     help="credibilty index")
+    ap.add_argument("-topic", "--topic", required=True,
+    help="Topic Modeling")
     ap.add_argument("-data", "--datatype", required=False,
     help="data type")
-    ap.add_argument("-p", "--parallel", required=False,
-    help="Parallel")
+    
     args = vars(ap.parse_args())
     print(args)
     main(args['sentiment'], args['credibility'], args['datatype'])
