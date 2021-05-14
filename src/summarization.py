@@ -31,21 +31,26 @@ class Summarization:
         if self.model == 't5':
             from transformers import T5Tokenizer, T5ForConditionalGeneration
             model_name = 't5-base'
+            model = T5ForConditionalGeneration.from_pretrained(model_name)
+            tokenizer = T5Tokenizer.from_pretrained(model_name)
         elif self.model == 'bart':
             from transformers import BartTokenizer, BartForConditionalGeneration
             model_name = 'facebook/bart-large-cnn'
+            model = BartForConditionalGeneration.from_pretrained(model_name)
+            tokenizer = BartTokenizer.from_pretrained(model_name)
         elif self.model == 'pegasus':
             from transformers import PegasusTokenizer, PegasusForConditionalGeneration
             model_name = "human-centered-summarization/financial-summarization-pegasus"
+            model = PegasusForConditionalGeneration.from_pretrained(model_name)
+            tokenizer = PegasusTokenizer.from_pretrained(model_name)
         elif self.model == 'led':
             from transformers import LEDTokenizer, LEDForConditionalGeneration, LEDConfig
             model_name = 'allenai/led-base-16384'
+            model = LEDForConditionalGeneration.from_pretrained(model_name)
+            tokenizer = LEDTokenizer.from_pretrained(model_name)
 
         # run seleted model
         if self.model in ['t5', 'bart', 'pegasus']:
-            # initialize model
-            model = BartForConditionalGeneration.from_pretrained(model_name)
-            tokenizer = BartTokenizer.from_pretrained(model_name)
 
             # initialize parsing method for text (text length < 512 tokens for these transformer models)
             window = round(512/(len(words)/len(sentences))) - 1
