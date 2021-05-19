@@ -8,6 +8,8 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 #!pip install transformers
 #!pip install sentencepiece
 
+#==============================================================================================================================#
+
 class Summarization:
 
     def __init__(self, model='bart'):
@@ -111,3 +113,71 @@ class Summarization:
             text_file.write('* ' + ' \n* '.join(summary))
 
     #---------------------------------------------------------------------#
+
+#==============================================================================================================================#
+
+class QuestionAnswering:
+
+    def _answering(self, question, context):
+
+        from transformers import pipeline
+
+        sentences = sent_tokenize(context)
+        words = word_tokenize(context)
+
+        window = round(4096/(len(words)/len(sentences))) - 1
+        stride = round(window*0.85)
+        begin = 0
+        end = window
+        qa_list = []
+        while (begin < len(sentences)):
+            # Tokenize our text
+            # If you want to run the code in Tensorflow, please remember to return the particular tensors as simply as using return_tensors = 'tf'
+            if end <= len(sentences):
+                text_to_summarize = ' '.join(sentences[begin:end])
+            elif end > len(sentences):
+                text_to_summarize = ' '.join(sentences[begin:])
+
+            # Generating an answer to the question in context
+            model_name = "mrm8488/longformer-base-4096-finetuned-squadv2"
+            qa = pipeline(
+                "question-answering",
+                model = model_name,
+                tokenizer = model_name,
+                device=0
+            )
+            answer = qa(question=question, context=text_to_summarize)
+            qa_list.append((
+                answer['answer'],
+                round(answer['score'], 4),
+                text_to_summarize[max(0,answer['start']-100): min(len(text_to_summarize), answer['end']+100)]
+            ))
+
+            begin += stride
+            end += stride
+
+        qa_list = sorted(qa_list, key = lambda x: x[1], reverse=True)
+
+        return qa_list
+
+    #---------------------------------------------------------------------#
+
+    def get_answer(self, question, context):
+        qa_list = self._answering(question, context)
+        answer = qa_list[:5]
+
+        return answer
+
+    #---------------------------------------------------------------------#
+
+    def save_answer(self, answer, file_name, destination):
+        path = os.path.join(destination, file_name)
+        with open(path, "w") as text_file:
+            for item in answer:
+                temp = [str(x) for x in item]
+                output = ','.join(temp)
+                text_file.write(output + '\n')
+
+    #---------------------------------------------------------------------#
+
+#==============================================================================================================================#
