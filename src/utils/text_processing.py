@@ -28,6 +28,9 @@ def remove_stopwords(texts, exclude = None):
         stop_words.extend(exclude)
     return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 
+def identity_tokenizer(text):
+    return text
+
 def make_bigrams(texts, data_words):
     # Build the bigram model
     bigram = gensim.models.Phrases(data_words, min_count=5, threshold=50) # higher threshold fewer phrases.

@@ -9,6 +9,7 @@ from gensim.models import CoherenceModel
 
 # spacy for lemmatization
 import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Plotting tools
 import pyLDAvis
@@ -33,8 +34,18 @@ class TopicModel:
         # Remove Stop Words
         data_words_nostops = remove_stopwords(data_words, exclude = ['thank', 'think', 'year', 'business', 'obviously', 'see', 'lot'])
 
+        print(len(data_words_nostops))
+        tfidf = TfidfVectorizer(tokenizer=identity_tokenizer, lowercase=False)    
+        tfidf.fit_transform(data_words_nostops)
+        data_tfidf = tfidf.get_feature_names()
+        print(len(data_tfidf), '*****************')
+        # use only tfidf terms 
+        #print(data_tfidf[:-10])
+        print(data_words_nostops[:5])
+        data_filtered = [word for word in text for text in data_words_nostops if word not in data_tfidf]
+        print(len(data_filtered))
         # Form Bigrams
-        data_words_bigrams = make_bigrams(data_words_nostops, data_words)
+        data_words_bigrams = make_bigrams(data_filtered, data_words)
 
         df['bigrams'] = data_words_bigrams
 
