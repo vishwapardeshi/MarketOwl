@@ -33,7 +33,7 @@ class Credibility:
         polysyllable count = number of words of more
         than two syllables in a sample of 30 sentences.
         """
-
+        print(len(text))
         if sentence_count(text) >= 3:
             poly_syllab = poly_syllable_count(text)
             SMOG = (1.043 * (30*(poly_syllab / sentence_count(text)))**0.5) \

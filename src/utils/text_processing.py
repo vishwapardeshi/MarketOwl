@@ -99,13 +99,13 @@ def syllables_count(word):
     complexity and grade level of a particular corpus.
     Package can be found at https://pypi.python.org/pypi/textstat
     """
-    return textstatistics().syllable_count(word)
+    return textstatistics().syllable_count(str(word))
 
 def avg_syllables_per_word(text):
     """
     Returns the average number of syllables per word in text
     """
-    syllable = syllables_count(text)
+    syllable = syllables_count(str(text))
     words = word_count(text)
     ASPW = float(syllable) / float(words)
     return legacy_round(ASPW, 1)
@@ -116,7 +116,7 @@ def difficult_words(text):
     """
     # Find all words in the text
     words = []
-    sentences = break_sentences(text)
+    sentences = break_sentences(str(text))
     for sentence in sentences:
         words += [str(token) for token in sentence]
 
@@ -129,7 +129,7 @@ def difficult_words(text):
     easy_word_set = set([x.strip() for x in lines]) 
 
     for word in words:
-        syllable_count = syllables_count(word)
+        syllable_count = syllables_count(str(word))
         if word not in easy_word_set and syllable_count >= 2:
             diff_words_set.add(word)
 
@@ -142,13 +142,13 @@ def poly_syllable_count(text):
     """
     count = 0
     words = []
-    sentences = break_sentences(text)
+    sentences = break_sentences(str(text))
     for sentence in sentences:
         words += [token for token in sentence]
 
 
     for word in words:
-        syllable_count = syllables_count(word)
+        syllable_count = syllables_count(str(word))
         if syllable_count >= 3:
             count += 1
     return count
