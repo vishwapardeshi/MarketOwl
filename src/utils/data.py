@@ -21,11 +21,13 @@ def load_data(filename, type = 'transcipt'):
     df (DataFrame) : Containing text column extracted along with unique ID 
     text_col (String) : Return name of text column to focus on 
     """
-    df = pd.read_csv(config.INPUT_FOLDER + filename)
+    df = pd.read_csv(config.INPUT_FOLDER + filename, error_bad_lines=False)
     if type == 'transcript':
         #load only company ticker 
         #implement later
-        text_col = 'TRANSCRIPT'
+        text_col = 'Transcript'
+        df[text_col] = df[text_col].map(lambda x: x.replace('"', ''))
+        
     elif type == '10k':
         text_col = 'text'
     elif type == '10q':
@@ -33,13 +35,5 @@ def load_data(filename, type = 'transcipt'):
     else:
         raise ValueError("Incorrect data type! \
                 Should be transcript, 10k or 10q")
-<<<<<<< Updated upstream
     
-    return df[:20], text_col
-=======
-    if parallel:
-        dask_dataframe = ddf.from_pandas(df[:10], npartitions=multiprocessing.cpu_count())
-        return dask_dataframe, text_col
-    else:
-        return df, text_col
->>>>>>> Stashed changes
+    return df, text_col

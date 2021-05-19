@@ -5,7 +5,7 @@ from credibility import Credibility
 from topic_modeling import TopicModel
 from utils.data import load_data
 
-def main(sentiment, credibility, topic, data):
+def main(sentiment, credibility, topic, data, file):
     #fetch data - if nothing mentioned do for all three
     if data is None:
         df_transcript = load_data('transcripts.csv', 'transcript')
@@ -21,9 +21,12 @@ def main(sentiment, credibility, topic, data):
 
     else:
         if data == 'transcript':
+            if file == None:
+                file = 'transcripts.csv'
             print("\n\nLoading transcript file...")
-            df_transcript, text_col = load_data('transcripts.csv', 'transcript')
+            df_transcript, text_col = load_data(file, 'transcript')
             print("Loaded into dataframe of size", df_transcript.shape)
+            
 
             if sentiment != 'n':
                 #perform sentiment analysis
@@ -83,17 +86,15 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     # Add the arguments to the parser
     ap.add_argument("-s", "--sentiment", required=True,
-    help="sentiment index")
+    help="sentiment method")
     ap.add_argument("-c", "--credibility", required=True,
-    help="credibilty index")
+    help="credibilty mtehod")
     ap.add_argument("-topic", "--topic", required=True,
     help="Topic Modeling")
     ap.add_argument("-data", "--datatype", required=True,
     help="data type")
-<<<<<<< Updated upstream
-    
-=======
->>>>>>> Stashed changes
+    ap.add_argument("-file", '--filename', required=False,
+    help='File name')
     args = vars(ap.parse_args())
     print(args)
-    main(args['sentiment'], args['credibility'], args['topic'], args['datatype'])
+    main(args['sentiment'], args['credibility'], args['topic'], args['datatype'], args['filename'])
