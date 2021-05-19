@@ -90,7 +90,10 @@ if __name__ == '__main__':
     help="Topic Modeling")
     ap.add_argument("-data", "--datatype", required=True,
     help="data type")
+<<<<<<< Updated upstream
     
+=======
+>>>>>>> Stashed changes
     args = vars(ap.parse_args())
     print(args)
     main(args['sentiment'], args['credibility'], args['topic'], args['datatype'])
