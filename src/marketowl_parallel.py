@@ -22,8 +22,11 @@ def main(sentiment, credibility, data):
         if data == 'transcript':
             print("\n\nLoading transcript file...")
             df_transcript, text_col = load_data('transcripts.csv', 'transcript')
+<<<<<<< Updated upstream
             #print("Loaded into dataframe of size", df_transcript.shape)
             print("This is the text col", text_col)
+=======
+>>>>>>> Stashed changes
 
             #perform sentiment analysis
             print("\nPerforming sentiment analysis using method:", sentiment)
@@ -33,11 +36,19 @@ def main(sentiment, credibility, data):
             print("Total time taken for performing sentiment analysis", time.time() - st)
 
             #perform credibility analysis
+<<<<<<< Updated upstream
             #st = time.time()
             #print("\nPerforming credibility analysis using method:", credibility)
             #credibility = Credibility(method=credibility)
             #credibility.get_credibility(df_transcript, text_col)
             #print("Total time taken for performing credbility analysis", time.time() - st)
+=======
+            st = time.time()
+            print("\nPerforming credibility analysis using method:", credibility)
+            credibility = Credibility(method=credibility)
+            credibility.get_credibility(df_transcript, text_col)
+            print("Total time taken for performing credbility analysis", time.time() - st)
+>>>>>>> Stashed changes
 
             #save data checkpoints
             print("\nSaving sentiment & credibility result for transcript file...\n\n")

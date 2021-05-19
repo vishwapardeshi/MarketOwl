@@ -48,9 +48,6 @@ class Sentiment:
         """
         Function to get sentiment label using vader library
         """
-        #iterate through rows to get polarity score
-        for ix, row in df.iterrows():
-            df.loc[ix, 'polarity_score'] = round(TextBlob(row[text_col]).sentiment.polarity, 3)
 
         df['polarity_score'] = df.text_col.map_partitions(lambda x: round(TextBlob(x).sentiment.polarity, 3))
 
