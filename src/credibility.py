@@ -51,9 +51,9 @@ class Credibility:
             PDW = Percentage of difficult words.
             ASL = Average sentence length
         """
-        words = word_count(text)
+        words = word_count(str(text))
         # Number of words not termed as difficult words
-        count = word_count - difficult_words(text)
+        count = words - difficult_words(text)
         if words > 0:
 
             # Percentage of words not on difficult word list
@@ -74,7 +74,7 @@ class Credibility:
 
             raw_score += 3.6365
 
-        return legacy_round(score, 2)
+        return legacy_round(raw_score, 2)
 
     def get_credibility(self, df, text_col):
         if self.method == 'gunning-fog':
