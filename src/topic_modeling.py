@@ -12,9 +12,9 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Plotting tools
-import pyLDAvis
+#import pyLDAvis
 #import pyLDAvis.gensim  # don't skip this
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 from utils.text_processing import * 
 
