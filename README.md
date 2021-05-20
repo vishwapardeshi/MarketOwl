@@ -16,10 +16,12 @@ For 755 rows of transcripts, it took 8968.298764944077 seconds
 
 2. Flesch Reading Ease
 `python3 marketowl.py -s n -c flesch -topic n -data transcript -file Transcript_Extract_10_companies.csv`
+For 755 rows of transcripts, it took 11754
 
 3. Smog Index
 `python3 marketowl.py -s n -c smog -topic n -data transcript -file Transcript_Extract_10_companies.csv`
-For 755 rows of transcripts, it took 
+For 755 rows of transcripts, it took 8666.06145977974 seconds
 
 4. Dale Challe
 `python3 marketowl.py -s n -c dale-chall -topic n -data transcript -file Transcript_Extract_10_companies.csv`
+For 755 rows of transcripts, it took 
