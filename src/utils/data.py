@@ -1,9 +1,5 @@
 #use this script to pull data for experimentation purpose
-
-
 import pandas as pd
-
-
 import config
 
 def load_data(filename, type = 'transcipt'):

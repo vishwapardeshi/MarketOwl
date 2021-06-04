@@ -1,78 +1,41 @@
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+#Libraries for Keywords
+import yake
+import nltk
+import re
 
-class Keywords:
+class Keywords():
+    def __init__(self, quants = True) -> None:
+        self.quants = quants
 
-    #---------------------------------------------------------------------#
+    def _filter_verbs(self, keywords):
+        curr_kw = set()
+        for ix in range(len(keywords)):
+            text,_ = keywords[ix]
+            if len(text) == 1:
+                word, pos = nltk.pos_tag(nltk.word_tokenize(text))[0]
+                if pos[0] != 'V':
+                    curr_kw.add(word)
+            else:
+                curr_kw.add(text)
+        return list(curr_kw) if curr_kw else []
 
-    def __init__(self, method='tfidf'):
-        self.method = method
+    def _generate_keywords(self, df, text_col):
+        custom_kw_extractor = yake.KeywordExtractor(lan='en', n=3, dedupLim=0.9, top=30, features=None)
+        keywords_2d = []
+        for ix, row in df.iterrows():
+            keywords = custom_kw_extractor.extract_keywords(row[text_col])
+            print(keywords)
+            print(self.filter_verbs(keywords))
+            keywords_2d.append(self.filter_verbs(keywords))
+        df[str(text_col) + '_keywords'] = keywords_2d
 
-    #---------------------------------------------------------------------#
-
-    def _count(self, df, text_col):
-        """
-        Function to find popular terms (2-gram, adding 3-gram is too slow) based on frequency
-        (Excluding 1-gram as it contains too much noises)
-        """
-        vectorizer = CountVectorizer(
-            stop_words = 'english',
-            ngram_range = (2,2),
-            min_df = round(len(df[text_col])/20)+1
-        )
-        X = vectorizer.fit_transform(df[text_col])    # note: X is a sparse matrix
-
-        top_keywords_all = []
-        for i in range(len(df[text_col])):
-            tf = X[i,:].toarray().tolist()[0]
-
-            # gather top 100 keywords
-            keywords = {}
-            for word, count in zip(vectorizer.get_feature_names(), tf):
-                keywords[word] = count
-            words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
-            # top_keywords = [x[0] for x in words_dict][:100]
-            top_keywords_all.append(words_dict[:300])
-
-        # add column to dataframe
-        df['keywords'] = top_keywords_all
-
-    #---------------------------------------------------------------------#
-
-    def _tfidf(self, df, text_col):
-        """
-        Function to find popular terms (2-gram, adding 3-gram is too slow) based on TFIDF
-        (Excluding 1-gram as it contains too much noises)
-        """
-        vectorizer = TfidfVectorizer(
-            stop_words = 'english',
-            ngram_range = (2,2),
-            min_df = round(len(df[text_col])/20)+1
-        )
-        X = vectorizer.fit_transform(df[text_col])    # note: X is a sparse matrix
-
-        top_keywords_all = []
-        for i in range(len(df[text_col])):
-            tfidf = X[i,:].toarray().tolist()[0]
-
-            # gather top 100 keywords
-            keywords = {}
-            for word, count in zip(vectorizer.get_feature_names(), tfidf):
-                keywords[word] = count
-            words_dict = sorted(keywords.items(), key=lambda item: item[1], reverse=True)
-            # top_keywords = [x[0] for x in words_dict][:100]
-            top_keywords_all.append(words_dict[:300])
-
-        # add column to dataframe
-        df['keywords'] = top_keywords_all
-
-    #---------------------------------------------------------------------#
-
-    def get_keywords(self, df, text_col):
-        if self.method == 'count':
-            self._count(df, text_col)
-        elif self.method == 'tfidf':
-            self._tfidf(df, text_col)
-        else:
-            raise ValueError("Incorrect method for extracting keywords! Should be 'tfidf' or 'count'")
-
-    #---------------------------------------------------------------------#
+    def _generate_quant_keywords(self, text):
+        return re.findall('[0-9]+\s[a-zA-Z]+\s[a-zA-Z]+\s[a-zA-Z]*', text)
+    
+    def get_keywords(self, df, text_col_list):
+        for text_col in text_col_list:
+            #generate keywords
+            self._generate_keywords(df, text_col)
+            if self.quants:
+                #generate quant keywords
+                df[str(text_col) + '_quantitative_keywords'] = df[text_col].apply(self._generate_quant_keywords)
