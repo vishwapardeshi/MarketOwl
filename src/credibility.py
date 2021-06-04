@@ -78,13 +78,17 @@ class Credibility:
 
     def get_credibility(self, df, text_col):
         if self.method == 'gunning-fog':
-            df['crebility_index_gunning_fog'] = df[text_col].apply(self._gunning_fog)
+            for col in text_col:
+                df[str(col) + '_crebility_index_gunning_fog'] = df[col].apply(self._gunning_fog)
         elif self.method == 'flesch':
-            df['crebility_index_flesch'] = df[text_col].apply(self._flesch_reading_ease)
+            for col in text_col:
+                df[str(col) + '_crebility_index_flesch'] = df[col].apply(self._flesch_reading_ease)
         elif self.method == 'smog':
-            df['crebility_index_smog'] = df[text_col].apply(self._smog_index)
+            for col in text_col:
+                df[str(col) + '_crebility_index_smog'] = df[col].apply(self._smog_index)
         elif self.method == 'dale-chall':
-            df['crebility_index_dale_chall'] = df[text_col].apply(self._dale_chall_readability_score)
+            for col in text_col:
+                df[str(col) + 'crebility_index_dale_chall'] = df[col].apply(self._dale_chall_readability_score)
         else:
             raise ValueError("Incorrect method for extracting crebility index! \
                 Should be gunning-fog, flesch, smog or dale-chall")

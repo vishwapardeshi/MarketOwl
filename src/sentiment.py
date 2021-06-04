@@ -85,11 +85,6 @@ class Sentiment:
         df['pos_ratio_normalized'] = (df['pos_ratio'] - df['pos_ratio'].mean())/df['pos_ratio'].std()
         df['neg_ratio_normalized'] = (df['neg_ratio'] - df['neg_ratio'].mean())/df['neg_ratio'].std()
 
-    def _bert(self, df, text_col):
-        """
-        Function to get sentiment label using bert
-        """
-
     def get_sentiment(self, df, text_col):
         if self.method == 'vader':
             self._vader(df, text_col)

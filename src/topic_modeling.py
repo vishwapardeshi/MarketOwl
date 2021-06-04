@@ -1,3 +1,8 @@
+"""
+This script is no longer in use. It performed topic modeling to identify abstract topics 
+within the documents. However, it requires a fair amount of interaction - tweaking 
+parameters - to generate coherent topic clusters. 
+"""
 # Gensim
 from nltk import text
 import gensim

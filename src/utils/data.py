@@ -2,7 +2,7 @@
 import pandas as pd
 import config
 
-def load_data(filename, type = 'transcipt'):
+def load_data(filename, type = 'transcipt', sectional = False):
     """
     To load data of three types - 
     1. Transcripts
@@ -21,9 +21,13 @@ def load_data(filename, type = 'transcipt'):
     if type == 'transcript':
         #load only company ticker 
         #implement later
-        text_col = 'Transcript'
-        df[text_col] = df[text_col].map(lambda x: x.replace('"', ''))
-        
+        if sectional == True:
+            text_col = ["Question & Answer Section", "Prepared Remarks Section"]
+        else:
+            text_col = ['Transcript']
+        for col in text_col:
+                df[col] = df[col].map(lambda x: x.replace('"', ''))
+            
     elif type == '10k':
         text_col = 'text'
     elif type == '10q':

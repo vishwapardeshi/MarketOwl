@@ -1,11 +1,15 @@
 import argparse
 import time
+import datetime import date
+
 from sentiment import Sentiment
 from credibility import Credibility
+from summary import Summary
+from keywords import Keywords
 from topic_modeling import TopicModel
 from utils.data import load_data
 
-def main(sentiment, credibility, topic, data, file):
+def main(sentiment, credibility, summary, keyword, data, file, sectional):
     #fetch data - if nothing mentioned do for all three
     if data is None:
         df_transcript = load_data('transcripts.csv', 'transcript')
@@ -13,22 +17,16 @@ def main(sentiment, credibility, topic, data, file):
         df_10q = load_data('10q.csv', '10q')
 
         raise NotImplementedError
-        #perform sentiment anlaysis
-
-        #perform credibility analysis
-
-        #save results
 
     else:
         if data == 'transcript':
             if file == None:
                 file = 'transcripts.csv'
-            print("\n\nLoading transcript file...")
-            df_transcript, text_col = load_data(file, 'transcript')
+            print("\n\nLoading transcript file {}...".format(file))
+            df_transcript, text_col = load_data(file, 'transcript', sectional)
             print("Loaded into dataframe of size", df_transcript.shape)
-            
 
-            if sentiment != 'n':
+            if sentiment.str.lower() != 'n':
                 #perform sentiment analysis
                 print("\nPerforming sentiment analysis using method:", sentiment)
                 st = time.time()
@@ -36,7 +34,7 @@ def main(sentiment, credibility, topic, data, file):
                 sentiment.get_sentiment(df_transcript, text_col)
                 print("Total time taken for performing sentiment analysis", time.time() - st)
 
-            if credibility != 'n':
+            if credibility.str.lower() != 'n':
                 #perform credibility analysis
                 st = time.time()
                 print("\nPerforming credibility analysis using method:", credibility)
@@ -44,38 +42,41 @@ def main(sentiment, credibility, topic, data, file):
                 credibility.get_credibility(df_transcript, text_col)
                 print("Total time taken for performing credbility analysis", time.time() - st)
 
-            if topic == 'y':
-                #perform topic modeling
+            if keyword.str.lower() not in ['simple', 'quant']:
+                raise ValueError("Incorrect method for extracting keywiords! \
+                Should be 'simple' or 'quant")
+            else:
+                if keyword.str.lower()  == 'simple':
+                    #perform keyword extraction
+                    print("\nPerforming non-quant keyword extraction")
+                    st = time.time()
+                    keywords = Keywords(quants=False)
+                    keywords.get_keywords(df_transcript, text_col)
+                    print("Total time taken for performing keyword extraction", time.time() - st)
+                
+                else:
+                    #perform keyword extraction
+                    print("\nPerforming non-quant keyword extraction")
+                    st = time.time()
+                    keywords = Keywords(quants=True)
+                    keywords.get_keywords(df_transcript, text_col)
+                    print("Total time taken for performing keyword extraction", time.time() - st)
+            
+            if summary.str.lower() == 'y':
+                #perform summarization
+                print("\nPerforming summarization")
                 st = time.time()
-                print("\nPerforming topic modeling using LDA")
-                topic_model = TopicModel()
-                topic_model.lda(df_transcript, text_col)
-                topic_model.get_topics()
-                topic_model.get_metrics()
-                print("Total time taken for performing credbility analysis", time.time() - st)
+                summary = Summary()
+                keywords.get_summary(df_transcript, text_col)
+                print("Total time taken for performing keyword extraction", time.time() - st)
 
             #save data checkpoints
-            print("\nSaving sentiment & credibility result for transcript file...\n\n")
-            df_transcript.to_csv('transcripts_analysis.csv')
+            print("\nSaving analysis result for transcript file {} in ../output folder...\n\n".format(file))
+            df_transcript.to_csv('transcripts_analysis'+ date.today().strftime("%d/%m/%Y") + '.csv')
         elif data == '10k':
-            print("\n\nLoading transcript file...")
-            df_10k, text_col = load_data('sec_10k.csv', '10k')
-            #print("Loaded into dataframe of size", df_10k.shape)
-
-            #perform sentiment analysis
-            print("\nPerforming sentiment analysis using method:", sentiment)
-            sentiment = Sentiment(method=sentiment)
-            sentiment.get_sentiment(df_10k, text_col)
-
-            #perform credibility analysis
-            print("\nPerforming credibility analysis using method:", credibility)
-            credibility = Credibility(method=credibility)
-            credibility.get_credibility(df_10k, text_col)
-
-            #save data checkpoints
-            print("\nSaving sentiment & credibility result for transcript file...\n\n")
-            df_10k.to_csv('sec_10k_item1_analysis.csv')
-
+            print("\n\nLoading 10k file {}...".format(file))
+            df_10k, text_col = load_data(file, '10k')
+            raise NotImplementedError
 
         elif data == '10q':
             df_10q = load_data('10q.csv', '10q')
@@ -89,12 +90,17 @@ if __name__ == '__main__':
     help="sentiment method")
     ap.add_argument("-c", "--credibility", required=True,
     help="credibilty mtehod")
-    ap.add_argument("-topic", "--topic", required=True,
-    help="Topic Modeling")
     ap.add_argument("-data", "--datatype", required=True,
     help="data type")
     ap.add_argument("-file", '--filename', required=False,
     help='File name')
+    ap.add_argument("-summary", '--summary', required=True,
+    help = "Generate Summary? y or n")
+    ap.add_argument("-keywords", '--keywords', required=True,
+    help = "Generate Keywords? simple or quant")
+    ap.add_argument("sectional", "--sectional-analysis", required=False,
+    help="To perform sectional analysis, enter y else n")
+
     args = vars(ap.parse_args())
     print(args)
     main(args['sentiment'], args['credibility'], args['topic'], args['datatype'], args['filename'])
