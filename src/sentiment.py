@@ -10,25 +10,29 @@ class Sentiment:
     def __init__(self, method = 'vader'):
         self.method = method
 
+    #---------------------------------------------------------------------#
+
     def _vader(self, df, text_col):
         """
         Function to get sentiment label using vader library
         """
         vader = SentimentIntensityAnalyzer()
-        df['polarity_score'] = [vader.polarity_scores(x)['compound'] for x in df[text_col]]
+        df[str(text_col) + '_vader_polarity_score'] = [vader.polarity_scores(x)['compound'] for x in df[text_col]]
 
         # create a list of our conditions
         conditions = [
-            (df['polarity_score'] <= -0.05),
-            (df['polarity_score'] > -0.05) & (df['polarity_score'] < 0.05),
-            (df['polarity_score'] >= 0.05)
+                (df[str(text_col) + '_vader_polarity_score'] <= -0.05),
+                (df[str(text_col) + '_vader_polarity_score'] > -0.05) & (df[str(text_col) + '_vader_polarity_score'] < 0.05),
+                (df[str(text_col) + '_vader_polarity_score'] >= 0.05)
             ]
 
         # create a list of the values we want to assign for each condition
         values = ['Negative', 'Neutral', 'Positive']
 
         # create a new column and use np.select to assign values to it using our lists as arguments
-        df['sentiment_label'] = np.select(conditions, values)
+        df[str(text_col) + '_vader_sentiment_label']  = np.select(conditions, values)
+
+    #---------------------------------------------------------------------#
 
     def _textblob(self, df, text_col):
         """
@@ -36,20 +40,22 @@ class Sentiment:
         """
         #iterate through rows to get polarity score
         for ix, row in df.iterrows():
-            df.loc[ix, 'polarity_score'] = round(TextBlob(row[text_col]).sentiment.polarity, 3)
+            df.loc[ix, str(text_col) + '_textblob_polarity_score'] = round(TextBlob(row[text_col]).sentiment.polarity, 3)
 
         # create a list of our conditions
         conditions = [
-            (df['polarity_score'] < 0),
-            (df['polarity_score'] == 0),
-            (df['polarity_score'] > 0)
+                (df[str(text_col) + '_textblob_polarity_score'] < 0),
+                (df[str(text_col) + '_textblob_polarity_score'] == 0),
+                (df[str(text_col) + '_textblob_polarity_score'] > 0)
             ]
 
         # create a list of the values we want to assign for each condition
         values = ['Negative', 'Neutral', 'Positive']
 
         # create a new column and use np.select to assign values to it using our lists as arguments
-        df['sentiment_label'] = np.select(conditions, values)
+        df[str(text_col) + '_textblob_sentiment_label'] = np.select(conditions, values)
+
+    #---------------------------------------------------------------------#
 
     def _vader_sent(self, df, text_col):
         pos_list = []
@@ -77,21 +83,25 @@ class Sentiment:
             pos_list.append(round(counter[1]/sum(counter.values()), 4))
             neg_list.append(round(counter[-1]/sum(counter.values()), 4))
 
-        # assign ratios to new columns
-        df['pos_ratio'] = pos_list
-        df['neg_ratio'] = neg_list
-
         # normalize ratios
-        df['pos_ratio_normalized'] = (df['pos_ratio'] - df['pos_ratio'].mean())/df['pos_ratio'].std()
-        df['neg_ratio_normalized'] = (df['neg_ratio'] - df['neg_ratio'].mean())/df['neg_ratio'].std()
+        pos_ratio_normalized = (np.array(pos_list) - np.mean(pos_list))/np.std(pos_list)
+        neg_ratio_normalized = (np.array(neg_list) - np.mean(neg_list))/np.std(neg_list)
+
+        df[str(text_col) + '_pos_ratio_normalized'] = pos_ratio_normalized
+        df[str(text_col) + '_neg_ratio_normalized'] = neg_ratio_normalized
+
+        #---------------------------------------------------------------------#
 
     def get_sentiment(self, df, text_col):
         if self.method == 'vader':
-            self._vader(df, text_col)
+            for col in text_col:
+                self._vader(df, col)
         elif self.method == 'textblob':
-            self._textblob(df, text_col)
+            for col in text_col:
+                self._textblob(df, col)
         elif self.method == 'vader_sent':
-            self._vader_sent(df, text_col)
+            for col in text_col:
+                self._vader_sent(df, col)
         else:
             raise ValueError("Incorrect method for extracting sentiments! \
                 Should be 'vader', 'textblob', or 'vader_sent'")
