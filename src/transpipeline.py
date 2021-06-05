@@ -126,12 +126,16 @@ class Summarization:
 
 class QuestionAnswering:
 
-    def _answering(self, question, context):
+    def __init__(self, question, model_name="mrm8488/longformer-base-4096-finetuned-squadv2"):
+        self.model_name = model_name
+        self.question = question
 
+    def _answering(self, context, question=None):
         from transformers import pipeline
 
         sentences = sent_tokenize(context)
         words = word_tokenize(context)
+        question = self.question if (question is None) else question
 
         window = round(4096/(len(words)/len(sentences))) - 1
         stride = round(window*0.85)
@@ -147,12 +151,11 @@ class QuestionAnswering:
                 text_to_summarize = ' '.join(sentences[begin:])
 
             # Generating an answer to the question in context
-            model_name = "mrm8488/longformer-base-4096-finetuned-squadv2"
             qa = pipeline(
                 "question-answering",
-                model = model_name,
-                tokenizer = model_name,
-                device=0
+                model = self.model_name,
+                tokenizer = self.model_name,
+                device=-1    # CPU: -1, GPU: 0
             )
             answer = qa(question=question, context=text_to_summarize)
             qa_list.append((
@@ -166,21 +169,25 @@ class QuestionAnswering:
 
         # order the answers with highest score (note: we're doing this in a moving-window way)
         qa_list = sorted(qa_list, key = lambda x: x[1], reverse=True)
+        answer = qa_list[0][0]
+        score = qa_list[0][1]
 
-        return qa_list
-
-    #---------------------------------------------------------------------#
-
-    def get_answer(self, question, context):
-        qa_list = self._answering(question, context)
-        # choose top 5 answers
-        answer = qa_list[:5]
-
-        return answer
+        return (answer, score)
 
     #---------------------------------------------------------------------#
 
-    def save_answer(self, answer, file_name, destination):
+    def get_answer(self, df, text_col):
+        for col in text_col:
+            df[str(col) + '_answers'] = df[col].apply(self._answering)
+
+    #---------------------------------------------------------------------#
+
+    @classmethod
+    def save_answer(cls, answer, file_name, destination):
+        """
+        !!! Deprecated !!!
+        Save answers to a file for a single transcript/document
+        """
         path = os.path.join(destination, file_name)
         with open(path, "w") as text_file:
             for item in answer:

@@ -6,10 +6,11 @@ from sentiment import Sentiment
 from credibility import Credibility
 from summary import Summary
 from keywords import Keywords
+from transpipeline import QuestionAnswering
 from topic_modeling import TopicModel
 from utils.data import load_data
 
-def main(sentiment, credibility, summary, keyword, data, file, sectional):
+def main(sentiment, credibility, summary, qa, keyword, data, file, sectional):
     #fetch data - if nothing mentioned do for all three
     if data is None:
         df_transcript = load_data('transcripts.csv', 'transcript')
@@ -53,7 +54,7 @@ def main(sentiment, credibility, summary, keyword, data, file, sectional):
                     keywords = Keywords(quants=False)
                     keywords.get_keywords(df_transcript, text_col)
                     print("Total time taken for performing keyword extraction", time.time() - st)
-                
+
                 else:
                     #perform keyword extraction
                     print("\nPerforming non-quant keyword extraction")
@@ -61,18 +62,28 @@ def main(sentiment, credibility, summary, keyword, data, file, sectional):
                     keywords = Keywords(quants=True)
                     keywords.get_keywords(df_transcript, text_col)
                     print("Total time taken for performing keyword extraction", time.time() - st)
-            
+
             if summary.str.lower() == 'y':
                 #perform summarization
                 print("\nPerforming summarization")
                 st = time.time()
                 summary = Summary()
-                keywords.get_summary(df_transcript, text_col)
-                print("Total time taken for performing keyword extraction", time.time() - st)
+                summary.get_summary(df_transcript, text_col)
+                print("Total time taken for performing summarization", time.time() - st)
+
+            if qa.str.lower() == 'y':
+                #perform summarization
+                print("\nPerforming Question Answering")
+                print("Question: What drives revenue growth?")
+                st = time.time()
+                qa = QuestionAnswering("What drives revenue growth?")  # change here to change the question
+                qa.get_answer(df_transcript, text_col)
+                print("Total time taken for performing question answering", time.time() - st)
 
             #save data checkpoints
             print("\nSaving analysis result for transcript file {} in ../output folder...\n\n".format(file))
             df_transcript.to_csv('transcripts_analysis'+ date.today().strftime("%d/%m/%Y") + '.csv')
+
         elif data == '10k':
             print("\n\nLoading 10k file {}...".format(file))
             df_10k, text_col = load_data(file, '10k')
@@ -96,9 +107,11 @@ if __name__ == '__main__':
     help='File name')
     ap.add_argument("-summary", '--summary', required=True,
     help = "Generate Summary? y or n")
+    ap.add_argument("-qa", '--qa', required=True,
+    help = "Warning: this will take a long time. Sure to generate Q&A answers?  y or n")
     ap.add_argument("-keywords", '--keywords', required=True,
     help = "Generate Keywords? simple or quant")
-    ap.add_argument("sectional", "--sectional-analysis", required=False,
+    ap.add_argument("-sectional", "--sectional-analysis", required=False,
     help="To perform sectional analysis, enter y else n")
 
     args = vars(ap.parse_args())
