@@ -1,6 +1,6 @@
 import argparse
 import time
-import datetime import date
+from datetime import date
 
 from sentiment import Sentiment
 from credibility import Credibility
