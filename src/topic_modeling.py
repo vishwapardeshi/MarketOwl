@@ -55,7 +55,7 @@ class TopicModel:
         df['bigrams'] = data_words_bigrams
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
-        # python3 -m spacy download en
+        # python -m spacy download en
         nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
 
         # Do lemmatization keeping only noun, adj, vb, adv

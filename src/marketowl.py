@@ -7,7 +7,6 @@ from credibility import Credibility
 from summary import Summary
 from keywords import Keywords
 from transpipeline import QuestionAnswering
-from topic_modeling import TopicModel
 from utils.data import load_data
 
 def main(sentiment, credibility, summary, qa, keyword, data, file, sectional):
@@ -116,4 +115,5 @@ if __name__ == '__main__':
 
     args = vars(ap.parse_args())
     print(args)
-    main(args['sentiment'], args['credibility'], args['topic'], args['datatype'], args['filename'])
+    main(args['sentiment'], args['credibility'], args['summary'], args['qa'], args['datatype'], args['filename'], \
+        args['sectional-analysis'])
