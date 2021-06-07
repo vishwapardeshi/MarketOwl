@@ -10,7 +10,7 @@ Command to get sentiment and credbility analysis for transcripts without paralle
 
 Command to generate credibility analysis by using
 1. Gunning Fog
-`python marketowl.py -s n -c gunning-fog -topic n -data transcript -file Transcript_Extract_10_companies.csv`
+`python marketowl.py -s n -c gunning-fog -summary n -qa n -keywords n -data transcript -file Transcript_Extract_10_companies.csv`
 
 For 755 rows of transcripts, it took 8968.298764944077 seconds
 
@@ -25,3 +25,15 @@ For 755 rows of transcripts, it took 8666.06145977974 seconds
 4. Dale Challe
 `python marketowl.py -s n -c dale-chall -topic n -data transcript -file Transcript_Extract_10_companies.csv`
 For 755 rows of transcripts, it took 16478.965087890625 seconds.
+
+You need to specify analysis to perform, the below will throw error
+`python marketowl.py -data transcript -file Transcript_Extract_10_companies.csv`
+
+Sentiment analysis specified
+`python marketowl.py -data transcript -file Transcript_Extract_10_companies.csv --sentiment 'vader_sent'`
+
+Credibility & summary specified
+`python marketowl.py -data transcript -file Transcript_Extract_10_companies.csv -c gunning-fog -summary y`
+
+Keywords on sectional 
+`python marketowl.py -data transcript -file Transcript_Extract_Sections.csv -keywords simple -sectional y `
