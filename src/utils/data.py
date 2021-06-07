@@ -36,4 +36,4 @@ def load_data(filename, type = 'transcipt', sectional = False):
         raise ValueError("Incorrect data type! \
                 Should be transcript, 10k or 10q")
     
-    return df[:10], text_col
+    return df, text_col

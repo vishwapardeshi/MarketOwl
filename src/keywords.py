@@ -24,9 +24,7 @@ class Keywords():
         keywords_2d = []
         for ix, row in df.iterrows():
             keywords = custom_kw_extractor.extract_keywords(row[text_col])
-            print(keywords)
-            print(self.filter_verbs(keywords))
-            keywords_2d.append(self.filter_verbs(keywords))
+            keywords_2d.append(self._filter_verbs(keywords))
         df[str(text_col) + '_keywords'] = keywords_2d
 
     def _generate_quant_keywords(self, text):

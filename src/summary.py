@@ -5,12 +5,11 @@ import en_core_web_sm
 class Summary:
     def __init__(self) -> None:
         self.nlp = en_core_web_sm.load()
-    def generate_summary(self, df, text_col):
+    def _generate_summary(self, df, text_col):
     # Get wiki content.
         summ_per = [''] * len(df)
         summ_words = [''] * len(df) 
-        for ix, row in df[600:].iterrows():
-            print(ix)
+        for ix, row in df.iterrows():
             text = row[text_col]
             doc = self.nlp(text)
 
@@ -24,4 +23,4 @@ class Summary:
 
     def get_summary(self, df, text_col_list):
         for text_col in text_col_list:
-            self.generate_summary(df, text_col)
+            self._generate_summary(df, text_col)
