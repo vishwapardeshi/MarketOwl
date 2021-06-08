@@ -4,6 +4,7 @@ import nltk
 #nltk.download('punkt')
 from nltk.tokenize import sent_tokenize, word_tokenize
 
+# using huggingface apis: https://huggingface.co/transformers/main_classes/pipelines.html
 # might need to download these first time using huggingface transformers
 #!pip install transformers
 #!pip install sentencepiece
@@ -109,7 +110,8 @@ class Summarization:
 
     #---------------------------------------------------------------------#
 
-    def save_summary(self, summary, file_name, destination):
+    @classmethod
+    def save_summary(cls, summary, file_name, destination):
         path = os.path.join(destination, file_name)
         with open(path, "w") as text_file:
             text_file.write('* ' + ' \n* '.join(summary))
@@ -131,6 +133,11 @@ class QuestionAnswering:
         self.question = question
 
     def _answering(self, context, question=None):
+        """
+        Function to answer quesiton
+        see: https://huggingface.co/transformers/main_classes/pipelines.html#transformers.QuestionAnsweringPipeline
+        """
+
         from transformers import pipeline
 
         sentences = sent_tokenize(context)
@@ -171,12 +178,18 @@ class QuestionAnswering:
         qa_list = sorted(qa_list, key = lambda x: x[1], reverse=True)
         answer = qa_list[0][0]
         score = qa_list[0][1]
+        ctxt = qa_list[0][2]
 
-        return (answer, score)
+        return (answer, score, ctxt)
 
     #---------------------------------------------------------------------#
 
     def get_answer(self, df, text_col):
+        """
+        Wrapper function to call _answering
+        (Note that this is slow if we apply this to too many transcrpts!)
+        """
+
         for col in text_col:
             df[str(col) + '_answers'] = df[col].apply(self._answering)
 
