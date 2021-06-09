@@ -39,7 +39,7 @@ Keywords on sectional
 `python marketowl.py -data transcript -file Transcript_Extract_Sections.csv -keywords simple -sectional y `
 
 ## Transformers Pipeline
-Note: It is not recommended to run the code on all the transcripts since it will run forever! However, you can still do question answering on all transcripts with `MarketOwl.py`. Currently I set question  to "What drives revenue growth?". If you want to change the question for the `MarketOwl.py`, there is an option at line 87 of `MarketOwl.py`. 
+Note: It is not recommended to run the code on all transcripts since it takes forever to run! However, you can still do question answering on all transcripts with `MarketOwl.py`. Currently I set default question to "What drives revenue growth?" If you want to change the default question for `MarketOwl.py`, there is an option at line 87 of `MarketOwl.py`; just switch the string inside `QuestionAnswering()`.
 * To see how to run transformer models (transformer-based summary and question answering), please check the Jupyter Notebook `main_tony.ipynb`. For more elaborated documentation please check https://huggingface.co/transformers/model_summary.html. 
 * Currently I set the running device to CPU. If you want to change it to GPU, line 165 of `transpipeline.py` has the option to change it (change -1 to 0). However, please make sure that you have enough VRAM since it crashes on my laptop, which only has 4GB of VRAM.  
-* I think it is better to make a more interative way to present the results for question answering. Current code can produce the results but how they are presented can be improved in the future. 
+* I think it is better to build a more interative interface to present the results of question answering. Our current code can produce the results but how they are presented can be improved in the future. 
